@@ -21,3 +21,8 @@ htmlcov/
 # Operating system files
 .DS_Store
 Thumbs.db
+
+# Python packaging files
+*.egg-info/
+build/
+dist/
