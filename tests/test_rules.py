@@ -3,6 +3,7 @@
 from appraisal_analyst.rules import (
     check_minimum_length,
     check_personality_language,
+    check_rating_alignment,
     check_supporting_evidence,
     check_vague_phrases,
     run_rule_checks,
@@ -64,3 +65,27 @@ def test_combined_engine_returns_four_results() -> None:
     results = run_rule_checks("John is a good performer.")
 
     assert len(results) == 4
+
+def test_unsupported_outstanding_comment_is_flagged() -> None:
+    """An Outstanding rating without supporting language should be flagged."""
+    result = check_rating_alignment(
+        "John is a great employee with a positive attitude.",
+        "Outstanding",
+    )
+
+    assert result["flagged"] is True
+    assert result["rating"] == "Outstanding"
+
+
+def test_evidence_based_high_rating_is_not_flagged() -> None:
+    """Strong performance evidence should support a high rating."""
+    result = check_rating_alignment(
+        "Sarah exceeded her targets, improved reporting accuracy, "
+        "and mentored two new employees.",
+        "Exceeds Expectations",
+    )
+
+    assert result["flagged"] is False
+    assert "exceeded" in result["matched_positive_terms"]
+    assert "improved" in result["matched_positive_terms"]
+    assert "mentored" in result["matched_positive_terms"]

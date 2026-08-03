@@ -37,6 +37,41 @@ EVIDENCE_TERMS = [
     "resolved",
 ]
 
+SUPPORTED_RATINGS = [
+    "Outstanding",
+    "Exceeds Expectations",
+    "Meets Expectations",
+    "Needs Improvement",
+    "Unsatisfactory",
+]
+
+POSITIVE_PERFORMANCE_TERMS = [
+    "achieved",
+    "delivered",
+    "exceeded",
+    "exceeds",
+    "exceptional",
+    "improved",
+    "increased",
+    "led",
+    "mentored",
+    "outstanding",
+    "reduced",
+    "strong",
+]
+
+NEGATIVE_PERFORMANCE_TERMS = [
+    "below expectations",
+    "concern",
+    "errors",
+    "failed",
+    "inconsistent",
+    "late",
+    "missed",
+    "needs improvement",
+    "underperformed",
+]
+
 def count_words(comment: str) -> int:
     """Return the number of words in an appraisal comment."""
     return len(comment.strip().split())
@@ -157,12 +192,96 @@ def check_supporting_evidence(comment: str) -> dict[str, object]:
         "has_number": has_number,
     }
 
+def check_rating_alignment(
+    comment: str,
+    rating: str,
+) -> dict[str, object]:
+    """Check for a possible mismatch between a rating and its comment."""
+    rating_lookup = {
+        supported_rating.lower(): supported_rating
+        for supported_rating in SUPPORTED_RATINGS
+    }
 
-def run_rule_checks(comment: str) -> list[dict[str, object]]:
-    """Run all rule-based quality checks on an appraisal comment."""
-    return [
+    normalized_rating = rating.strip().lower()
+
+    if normalized_rating not in rating_lookup:
+        raise ValueError(
+            f"Unsupported rating: {rating}. "
+            f"Choose one of: {', '.join(SUPPORTED_RATINGS)}."
+        )
+
+    canonical_rating = rating_lookup[normalized_rating]
+    normalized_comment = comment.lower()
+
+    matched_positive_terms = [
+        term
+        for term in POSITIVE_PERFORMANCE_TERMS
+        if re.search(rf"\b{re.escape(term)}\b", normalized_comment)
+    ]
+
+    matched_negative_terms = [
+        term
+        for term in NEGATIVE_PERFORMANCE_TERMS
+        if re.search(rf"\b{re.escape(term)}\b", normalized_comment)
+    ]
+
+    positive_count = len(matched_positive_terms)
+    negative_count = len(matched_negative_terms)
+
+    high_ratings = {"Outstanding", "Exceeds Expectations"}
+    low_ratings = {"Needs Improvement", "Unsatisfactory"}
+
+    if canonical_rating in high_ratings:
+        flagged = (
+            positive_count == 0
+            or negative_count > positive_count
+        )
+    elif canonical_rating in low_ratings:
+        flagged = (
+            negative_count == 0
+            or positive_count > negative_count
+        )
+    else:
+        flagged = negative_count >= 2 and positive_count == 0
+
+    if flagged:
+        message = (
+            f"The language may not clearly support the "
+            f"'{canonical_rating}' rating. Review the rating and add "
+            "specific performance evidence."
+        )
+    else:
+        message = (
+            "No clear rating-comment mismatch was detected by the "
+            "rule-based check."
+        )
+
+    return {
+        "rule_id": "rating_alignment",
+        "category": "rating_mismatch",
+        "flagged": flagged,
+        "message": message,
+        "rating": canonical_rating,
+        "matched_positive_terms": matched_positive_terms,
+        "matched_negative_terms": matched_negative_terms,
+        "positive_term_count": positive_count,
+        "negative_term_count": negative_count,
+    }
+
+
+def run_rule_checks(
+    comment: str,
+    rating: str | None = None,
+) -> list[dict[str, object]]:
+    """Run all applicable rule-based checks on an appraisal comment."""
+    results = [
         check_minimum_length(comment),
         check_vague_phrases(comment),
         check_personality_language(comment),
         check_supporting_evidence(comment),
     ]
+
+    if rating is not None:
+        results.append(check_rating_alignment(comment, rating))
+
+    return results
