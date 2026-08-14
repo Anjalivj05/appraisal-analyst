@@ -89,3 +89,12 @@ def test_evidence_based_high_rating_is_not_flagged() -> None:
     assert "exceeded" in result["matched_positive_terms"]
     assert "improved" in result["matched_positive_terms"]
     assert "mentored" in result["matched_positive_terms"]
+def test_negative_performance_can_still_contain_evidence() -> None:
+    """Specific negative performance examples should count as evidence."""
+    result = check_supporting_evidence(
+        "Missed three monthly reporting deadlines and had repeated errors."
+    )
+
+    assert result["flagged"] is False
+    assert "missed" in result["matched_terms"]
+    assert "errors" in result["matched_terms"]

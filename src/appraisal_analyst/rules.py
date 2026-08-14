@@ -35,6 +35,15 @@ EVIDENCE_TERMS = [
     "automated",
     "mentored",
     "resolved",
+    "exceeded",
+    "missed",
+    "failed",
+    "errors",
+    "deadline",
+    "deadlines",
+    "on time",
+    "ahead of schedule",
+    "quality checks",
 ]
 
 SUPPORTED_RATINGS = [

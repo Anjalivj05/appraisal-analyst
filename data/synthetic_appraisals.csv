@@ -1,0 +1,21 @@
+appraisal_id,department,job_level,rating,comment,expected_vagueness,expected_missing_evidence,expected_potential_bias,expected_rating_mismatch,expected_revision
+A001,Engineering,Individual Contributor,Outstanding,John is a great employee with a positive attitude. Everyone likes working with him.,True,True,True,True,True
+A002,Finance,Individual Contributor,Exceeds Expectations,"Sarah exceeded her annual target by 18%, reduced reporting time, and mentored two new team members.",False,False,False,False,False
+A003,Marketing,Individual Contributor,Meets Expectations,Good performer.,True,True,False,False,True
+A004,Operations,Manager,Needs Improvement,Delivered all assigned reports on time and improved processing accuracy by 12%.,False,False,False,True,True
+A005,Sales,Individual Contributor,Exceeds Expectations,Exceeded quarterly sales targets by 15% and increased renewal revenue across key accounts.,False,False,False,False,False
+A006,Human Resources,Manager,Meets Expectations,Works hard and does a good job supporting the team.,True,True,False,False,True
+A007,Engineering,Senior Individual Contributor,Outstanding,"Led the migration of three reporting pipelines, reduced processing time by 32%, and mentored four engineers.",False,False,False,False,False
+A008,Finance,Individual Contributor,Meets Expectations,Reliable employee with a likeable personality and a good fit for the finance team.,False,True,True,False,True
+A009,Marketing,Manager,Exceeds Expectations,Improved campaign conversion by 21% and delivered the annual product launch two weeks ahead of schedule.,False,False,False,False,False
+A010,Sales,Individual Contributor,Needs Improvement,Exceeded quota in every quarter and increased revenue from strategic accounts by 17%.,False,False,False,True,True
+A011,Operations,Individual Contributor,Needs Improvement,Missed three monthly reporting deadlines and had repeated errors that required additional review.,False,False,False,False,False
+A012,Human Resources,Individual Contributor,Unsatisfactory,Needs improvement.,True,True,False,False,True
+A013,Engineering,Manager,Outstanding,Strong technical leader who delivered the platform upgrade and reduced production incidents by 28%.,False,False,False,False,False
+A014,Finance,Manager,Exceeds Expectations,Has a difficult personality but produced accurate monthly financial reports.,False,True,True,True,True
+A015,Marketing,Individual Contributor,Meets Expectations,Completed all scheduled campaign reports and delivered weekly performance updates to stakeholders.,False,False,False,False,False
+A016,Sales,Manager,Outstanding,Great employee who works hard and has the right attitude.,True,True,True,True,True
+A017,Operations,Manager,Unsatisfactory,"Missed five critical deadlines, failed to complete required quality checks, and created repeated processing errors.",False,False,False,False,False
+A018,Human Resources,Manager,Exceeds Expectations,"Reduced onboarding processing time by 24%, automated two manual reporting activities, and improved completion rates.",False,False,False,False,False
+A019,Engineering,Individual Contributor,Meets Expectations,Consistently meets expectations across all areas.,True,True,False,False,True
+A020,Finance,Senior Individual Contributor,Outstanding,"Improved forecasting accuracy by 19%, delivered the annual budget ahead of schedule, and led automation of monthly variance reporting.",False,False,False,False,False
