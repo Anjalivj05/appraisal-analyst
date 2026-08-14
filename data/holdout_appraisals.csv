@@ -1,0 +1,13 @@
+appraisal_id,department,job_level,rating,comment,expected_vagueness,expected_missing_evidence,expected_potential_bias,expected_rating_mismatch,expected_revision
+H001,Engineering,Individual Contributor,Meets Expectations,Provides dependable support to colleagues and consistently contributes across assigned responsibilities throughout the year.,True,True,False,False,True
+H002,Operations,Individual Contributor,Exceeds Expectations,Built a reconciliation workflow that removed duplicate manual steps and gave analysts same-day results.,False,False,False,False,False
+H003,Marketing,Manager,Meets Expectations,Her communication style can be abrasive in meetings even though her project work is consistently reliable.,False,True,True,False,True
+H004,Finance,Individual Contributor,Meets Expectations,Work is often late and requires repeated correction before monthly reporting can be finalized.,False,False,False,True,True
+H005,Sales,Individual Contributor,Outstanding,"Closed complex enterprise opportunities, expanded strategic accounts, and became the primary resource for difficult client negotiations.",False,False,False,False,False
+H006,Human Resources,Manager,Exceeds Expectations,She is not leadership material and can be difficult to work with despite completing her assigned responsibilities.,False,True,True,True,True
+H007,Engineering,Senior Individual Contributor,Outstanding,"Improved API response time by 34%, resolved two recurring production failures, and mentored three junior engineers.",False,False,False,False,False
+H008,Finance,Manager,Needs Improvement,"Produces accurate forecasts, supports executive planning, and is trusted with high-priority financial analysis.",False,False,False,True,True
+H009,Operations,Manager,Meets Expectations,Coordinated the warehouse transition across three teams and maintained service continuity during the change.,False,False,False,False,False
+H010,Marketing,Individual Contributor,Exceeds Expectations,Always brings great energy to the team and everyone enjoys working with her on campaigns.,True,True,True,True,True
+H011,Sales,Manager,Unsatisfactory,"Failed to submit required forecasts, missed client follow-ups, and had repeated errors in account documentation.",False,False,False,False,False
+H012,Human Resources,Individual Contributor,Meets Expectations,"Handled employee onboarding questions, coordinated orientation activities, and maintained accurate new-hire documentation.",False,False,False,False,False
