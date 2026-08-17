@@ -1,40 +1,68 @@
-\# Responsible AI and Governance
+\# Responsible Use and Governance
 
 
 
-\## Purpose
+The Appraisal Analyst reviews the quality of written employee performance-feedback comments.
 
 
 
-The Appraisal Analyst is designed to support the review of written employee performance-appraisal comments before they are finalized.
+It is designed to help identify comments that may be vague, unsupported by evidence, focused too heavily on personality, or inconsistent with the selected performance rating.
 
 
 
-The application analyzes comment quality and identifies potential concerns such as:
+It is not designed to make employment decisions.
 
 
 
-\- Vague or generic feedback
+\---
+
+
+
+\## What the Application Does
+
+
+
+The application reviews four areas:
+
+
+
+\- Vagueness
 
 \- Missing supporting evidence
 
-\- Possible rating-comment mismatch
+\- Potentially biased or personality-focused language
 
-\- Personality-focused or potentially biased language
-
-
-
-The application is a review-support tool and is not intended to make employment decisions.
+\- Rating mismatch
 
 
 
-\## Scope Boundary
+Two different approaches are used:
 
 
 
-The Appraisal Analyst must not independently determine or recommend:
+1\. A transparent rule-based baseline
+
+2\. A context-aware large language model (LLM)
 
 
+
+The results are shown side by side so the differences between the two approaches are visible.
+
+
+
+\---
+
+
+
+\## What It Does Not Do
+
+
+
+The application does not decide:
+
+
+
+\- Employee ratings
 
 \- Promotions
 
@@ -46,47 +74,123 @@ The Appraisal Analyst must not independently determine or recommend:
 
 \- Discipline
 
-\- Employee performance ratings
+
+
+A flag simply means that a comment may deserve closer review.
 
 
 
-Its purpose is limited to evaluating the quality of written appraisal documentation.
+It does not mean that the employee, manager, or comment has been judged as biased, unfair, or incorrect.
 
 
 
-\## Data Privacy
+\---
 
 
 
-Performance-review information may contain sensitive employee information.
+\## Data and Privacy
 
 
 
-The public portfolio version therefore uses only synthetic data.
+This portfolio project uses synthetic data for development and evaluation.
 
 
 
-If the application were evaluated in an organizational environment, appropriate controls would include:
+Real employee performance reviews can contain sensitive personal or workplace information. A production version would require stronger privacy controls before real HR data could be used.
 
 
 
-\- De-identification where possible
-
-\- Role-based access
-
-\- Secure storage
-
-\- Defined retention periods
-
-\- Access and activity logging
-
-\- Approved data-processing environments
-
-\- Review of vendor data-use and model-training terms
+Examples include:
 
 
 
-Real employee appraisal data should not be placed in the public repository.
+\- Limiting access to authorized users
+
+\- Removing unnecessary personal information
+
+\- Encrypting stored and transmitted data
+
+\- Defining retention and deletion rules
+
+\- Reviewing the data-use terms of any external model provider
+
+
+
+For the public demo, users are asked to enter only synthetic or non-sensitive text.
+
+
+
+\---
+
+
+
+\## Rule-Based Analysis
+
+
+
+The rule-based system uses predefined phrases, evidence terms, word-count checks, and rating-alignment rules.
+
+
+
+Its main strength is transparency. It is easy to see why a rule was triggered.
+
+
+
+Its limitation is that it cannot fully understand language or context.
+
+
+
+For example, a rule may detect the word `attitude`, but miss another phrase that communicates a similar personality-based judgment.
+
+
+
+\---
+
+
+
+\## Contextual LLM Analysis
+
+
+
+The application also uses Llama 3.3 70B through Cloudflare Workers AI.
+
+
+
+The large language model reviews the full meaning of the comment instead of relying only on predefined keywords.
+
+
+
+This helps with unfamiliar wording and more context-dependent comments.
+
+
+
+However, the model is not automatically correct.
+
+
+
+It may:
+
+
+
+\- Interpret an ambiguous comment differently from a reviewer
+
+\- Flag something that does not need revision
+
+\- Miss an issue that should have been flagged
+
+\- Produce different judgments on borderline wording
+
+
+
+For that reason, the application presents the LLM result as another source of analysis rather than as a final answer.
+
+
+
+If the external model is unavailable, the rule-based analysis can still operate independently.
+
+
+
+\---
 
 
 
@@ -94,257 +198,107 @@ Real employee appraisal data should not be placed in the public repository.
 
 
 
-Performance-review language can contain subjective or personality-focused wording.
+Performance-review language can be subjective.
 
 
 
-The application therefore includes checks intended to identify potentially problematic language, but these checks have important limitations.
+Words about personality, likability, temperament, or culture fit may sometimes be relevant to workplace behavior, but they can also introduce unfair or unsupported judgments.
 
 
 
-A keyword or language model flag does not prove that a comment is biased.
+The application therefore highlights this type of wording for closer review.
 
 
 
-Likewise, the absence of a flag does not prove that a comment is fair.
+A flag does not prove that bias exists.
 
 
 
-Outputs should be treated as signals for further review rather than conclusions about an employee or manager.
+The purpose is to make potentially problematic wording easier to notice.
 
 
 
-\## False Positives and False Negatives
+\---
 
 
 
-Two important error types are monitored.
+\## Evaluation
 
 
 
-\### False Positive
+Both approaches are tested using synthetic appraisal comments with expected labels.
 
 
 
-A comment is flagged even though it is acceptable.
+The project includes:
 
 
 
-This may create unnecessary review work or incorrectly suggest that valid feedback contains a problem.
+\- A 20-record development dataset
 
+\- A separate 12-record challenge dataset
 
 
-\### False Negative
 
+The challenge dataset is used to see how well each approach handles less familiar wording.
 
 
-A problematic comment passes without being flagged.
 
+The results show that the rule-based system and contextual LLM have different strengths.
 
 
-This may allow vague, unsupported, inconsistent, or inappropriate feedback to remain unnoticed.
 
+Full evaluation results are available in \[`evaluation.md`](evaluation.md).
 
 
-The evaluation pipeline therefore measures both types of errors rather than relying only on overall accuracy.
 
+Because the datasets are small and synthetic, the reported results should not be treated as production-level accuracy.
 
 
-\## Evaluation Controls
 
+\---
 
 
-The project uses:
 
+\## Errors and Review
 
 
-\- Curated synthetic development examples
 
-\- A separate synthetic challenge set
+Both false positives and false negatives matter.
 
-\- Accuracy, precision, recall, and F1 score
 
-\- Confusion-matrix counts
 
-\- Error analysis
+A false positive could send an acceptable comment for unnecessary revision.
 
-\- Automated regression tests
 
 
+A false negative could allow a weak or potentially problematic comment to pass without being noticed.
 
-The challenge-set results demonstrate that the transparent rule-based baseline does not generalize perfectly to unfamiliar wording.
 
 
+The application therefore shows the reasons behind the analysis instead of hiding them behind a single score.
 
-This limitation is documented rather than hidden.
 
 
+The final interpretation should remain with the person reviewing the feedback.
 
-\## Rule-Based Baseline Limitations
 
 
+\---
 
-The baseline relies on:
 
 
+\## Project Scope
 
-\- Keyword dictionaries
 
-\- Phrase matching
 
-\- Word-count thresholds
+The Appraisal Analyst is a portfolio prototype showing how rule-based NLP and a contextual LLM can be compared within the same application.
 
-\- Simple rating-alignment heuristics
 
 
+The goal is not to automate HR decisions.
 
-These rules are explainable and easy to audit, but they do not fully understand language or context.
 
 
-
-They may miss:
-
-
-
-\- Indirect personality judgments
-
-\- Unfamiliar descriptions of supporting evidence
-
-\- Context-dependent vagueness
-
-\- Complex relationships between written feedback and ratings
-
-
-
-The rule dictionaries should not be continuously expanded simply to memorize evaluation examples.
-
-
-
-\## Optional LLM Layer
-
-
-
-A later project stage may use an LLM to analyze contextual issues that deterministic rules cannot easily capture.
-
-
-
-The LLM will remain optional so that:
-
-
-
-\- The rule-based baseline can be evaluated independently
-
-\- Users can compare deterministic and contextual analysis
-
-\- The system still works without an external model
-
-\- LLM output can be evaluated against the same reference data
-
-
-
-LLM-generated analysis should also be treated as advisory rather than authoritative.
-
-
-
-\## Human Review
-
-
-
-A qualified reviewer should evaluate flagged concerns before any action is taken.
-
-
-
-The application should explain why a concern was identified and provide enough information for the reviewer to agree, disagree, or investigate further.
-
-
-
-Human review is therefore a governance control, not the primary feature or identity of the project.
-
-
-
-\## Logging and Auditability
-
-
-
-A production implementation should maintain an audit trail containing information such as:
-
-
-
-\- Review timestamp
-
-\- Appraisal identifier
-
-\- Analysis method used
-
-\- Checks triggered
-
-\- Model or rule version
-
-\- Reviewer decision
-
-\- Override information
-
-
-
-Sensitive appraisal text should only be retained when permitted by organizational privacy and retention policies.
-
-
-
-\## Deployment Considerations
-
-
-
-Before use with real employee data, an organization would need to validate:
-
-
-
-\- Accuracy on organization-specific review language
-
-\- Fairness across relevant employee groups
-
-\- Privacy and security controls
-
-\- Data residency requirements
-
-\- Model-provider contractual terms
-
-\- Access permissions
-
-\- Retention policies
-
-\- Monitoring and incident-response procedures
-
-
-
-Performance on this portfolio project's synthetic datasets should not be interpreted as evidence that the system is ready for production deployment.
-
-
-
-\## Current Project Position
-
-
-
-The Appraisal Analyst is a portfolio prototype demonstrating:
-
-
-
-1\. Transparent rule-based text analysis
-
-2\. Structured application design
-
-3\. Synthetic-data generation
-
-4\. Automated testing
-
-5\. Quantitative evaluation
-
-6\. Holdout error analysis
-
-7\. Responsible-AI controls
-
-8\. Optional contextual LLM analysis
-
-
-
-The goal is to demonstrate how an AI-assisted analytics application can be evaluated and governed, not simply how an LLM can be connected to a user interface.
+The goal is to demonstrate a practical way to improve the quality and consistency of written performance feedback while keeping the limitations of both approaches visible.
 
