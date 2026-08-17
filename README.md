@@ -1,131 +1,120 @@
 # The Appraisal Analyst
 
-The Appraisal Analyst is a Python and Streamlit application that reviews employee performance-appraisal comments for common quality issues.
+A Python and Streamlit application that reviews the quality of written employee performance feedback using two different approaches:
 
-It checks whether feedback is vague, lacks supporting evidence, does not align with the selected rating, or focuses too much on personality instead of job performance.
+- a transparent **rule-based NLP baseline**
+- a context-aware **large language model (LLM)**
+
+The application compares both approaches side by side to show where they agree, where they differ, and what could improve the written feedback.
 
 ### Live Demo
 
-**Try the application:** [appraisal-analyst.streamlit.app](https://appraisal-analyst.streamlit.app)
-
-The project compares two different approaches:
-
-* a transparent **rule-based baseline**
-* a **contextual LLM analysis** using Llama 3.3 70B through Cloudflare Workers AI
-
-The goal is not to let AI make HR decisions. The goal is to see whether written feedback is clear, specific, and well supported before an appraisal is finalized.
+**[Try The Appraisal Analyst](https://appraisal-analyst.streamlit.app)**
 
 ---
 
 ## Why I Built This
 
-Performance reviews can influence promotions, compensation, development plans, and other important career decisions.
+Performance-review comments are often subjective.
 
-But the quality of the written feedback can vary a lot between managers.
+A rating such as **Outstanding** may be paired with a comment like:
 
-A comment such as:
+> "John is a great employee with a positive attitude. Everyone likes working with him."
 
-> “John is a great employee with a positive attitude. Everyone likes working with him.”
+The comment sounds positive, but it does not explain what John actually accomplished or why the rating is justified.
 
-sounds positive, but it does not explain what John actually achieved or why the comment supports an **Outstanding** rating.
-
-Reviewing hundreds of comments manually can also take a lot of HR time.
-
-The Appraisal Analyst explores how simple rules and contextual AI can help identify comments that may need a closer look.
+The Appraisal Analyst was built to identify these kinds of quality issues before written feedback is finalized.
 
 ---
 
-## What the App Checks
+## What the App Reviews
 
-Each appraisal comment is reviewed for four areas:
+The application checks four areas:
 
-### Vagueness
+| Check | What it looks for |
+|---|---|
+| **Vagueness** | Feedback that is too general or unclear |
+| **Supporting Evidence** | Whether the comment includes examples, outcomes, actions, or measurable evidence |
+| **Potentially Biased Language** | Personality, likability, temperament, or similar wording that may deserve closer review |
+| **Rating Alignment** | Whether the written feedback appears to support the selected performance rating |
 
-Is the feedback too general or unclear?
-
-### Missing Evidence
-
-Does the comment include actual examples, results, achievements, errors, deadlines, or measurable outcomes?
-
-### Potential Bias
-
-Does the wording focus on personality, likability, temperament, or similar traits instead of observable work performance?
-
-### Rating Alignment
-
-Does the written feedback provide enough support for the selected performance rating?
+A flag means the comment may deserve another look. It is not a conclusion about the employee or manager.
 
 ---
 
 ## How It Works
 
-A user enters:
-
-* a performance rating
-* an appraisal comment
-
-The application runs the same input through two approaches.
-
 ### 1. Rule-Based Analysis
 
-The baseline uses Python rules such as:
+The baseline uses transparent Python rules such as:
 
-* word-count checks
-* predefined vague phrases
-* personality-related terms
-* evidence keywords
-* simple rating-alignment logic
+- minimum comment length
+- known vague phrases
+- personality-focused terms
+- evidence-related words and numbers
+- positive and negative performance language
+- rating-alignment heuristics
 
-This approach is easy to understand and audit, but it has trouble when the same idea is written in an unfamiliar way.
+This approach is predictable and easy to audit, but it can miss issues when unfamiliar wording is used.
 
 ### 2. Contextual LLM Analysis
 
-The second approach sends the comment to **Llama 3.3 70B**, hosted through Cloudflare Workers AI.
+The second approach uses **Llama 3.3 70B** through **Cloudflare Workers AI**.
 
-Instead of looking only for predefined words, the model evaluates the meaning of the full comment.
+Instead of relying only on predefined keywords, the model evaluates the meaning of the full comment.
 
-The Streamlit interface then shows both results side by side so their differences are easy to see.
+It reviews the same four quality areas as the rule-based system so the results can be compared directly.
+
+### 3. Side-by-Side Comparison
+
+The Streamlit interface shows:
+
+- Rule-Based Flags
+- Contextual AI Flags
+- Agreement between the two approaches
+- Detailed rule explanations
+- LLM observations
+- Suggested improvements to the written feedback
 
 ---
 
 ## Evaluation
 
-The project uses synthetic appraisal comments so no real employee data is required.
+The project uses two synthetic datasets:
 
-Two datasets are included:
+- **20-record development set** for building and validating the rule-based baseline
+- **12-record challenge set** containing less familiar and more context-dependent wording
 
-* **20-record development set** for building and validating the rule-based baseline
-* **12-record challenge set** with harder and less familiar wording
+The challenge set was not used to shape the original rules, making it more useful for comparing how the two approaches generalize.
 
-On the challenge set:
+| Challenge-Set Metric | Rule-Based | Contextual LLM |
+|---|---:|---:|
+| Vagueness Accuracy | **0.83** | 0.75 |
+| Missing Evidence Accuracy | 0.50 | **0.92** |
+| Potential Bias Accuracy | 0.75 | **1.00** |
+| Rating Mismatch Accuracy | 0.75 | **0.92** |
+| Overall Revision Accuracy | 0.67 | **1.00** |
 
-| Check            | Rule-Based Accuracy | Contextual LLM Accuracy |
-| ---------------- | ------------------: | ----------------------: |
-| Vagueness        |            **0.83** |                    0.75 |
-| Missing Evidence |                0.50 |                **0.92** |
-| Potential Bias   |                0.75 |                **1.00** |
-| Rating Mismatch  |                0.75 |                **0.92** |
-| Overall Revision |                0.67 |                **1.00** |
+The LLM handled unfamiliar wording particularly well for supporting evidence, personality-focused language, and rating alignment.
 
-The results show why both approaches are useful.
+The rule-based approach performed slightly better on vagueness in this small challenge set.
 
-The rule-based system is predictable and explainable, while the LLM handles unfamiliar and contextual language much better in several categories.
+Neither approach should be treated as automatically correct.
 
-The LLM is not treated as automatically correct. It also disagreed with some reference labels, especially on borderline cases.
-
-See [`docs/evaluation.md`](docs/evaluation.md) for the evaluation details.
+See the full evaluation notes in [`docs/evaluation.md`](docs/evaluation.md).
 
 ---
 
 ## Tech Stack
 
-* Python 3.11
-* Streamlit
-* pandas
-* scikit-learn
-* pytest
-* Cloudflare Workers AI
-* Llama 3.3 70B
+- **Python 3.11**
+- **Streamlit**
+- **pandas**
+- **scikit-learn**
+- **pytest**
+- **Cloudflare Workers AI**
+- **Llama 3.3 70B**
+- **Git / GitHub**
 
 ---
 
@@ -133,65 +122,31 @@ See [`docs/evaluation.md`](docs/evaluation.md) for the evaluation details.
 
 ```text
 appraisal-analyst/
-├── data/                  # Synthetic development and challenge datasets
-├── docs/                  # Evaluation and governance documentation
+│
+├── app.py
+│
+├── data/
+│   ├── synthetic_appraisals.csv
+│   └── holdout_appraisals.csv
+│
+├── docs/
+│   ├── evaluation.md
+│   └── governance.md
+│
 ├── src/
 │   └── appraisal_analyst/
-│       ├── rules.py       # Rule-based checks
-│       ├── review.py      # Review workflow
-│       ├── llm.py         # Contextual LLM analysis
-│       ├── evaluation.py  # Rule-based evaluation
-│       └── llm_evaluation.py
-├── tests/                 # Automated tests
-├── course-project-docs/   # Original graduate capstone materials
-├── app.py                 # Streamlit application
+│       ├── rules.py
+│       ├── review.py
+│       ├── evaluation.py
+│       ├── llm.py
+│       ├── llm_evaluation.py
+│       ├── synthetic_data.py
+│       └── holdout_data.py
+│
+├── tests/
+│
+├── course-project-docs/
+│
+├── pyproject.toml
 ├── requirements.txt
 └── README.md
-```
-
----
-
-## Run Locally
-
-Clone the repository and install the dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Create a `.env` file using `.env.example` and add your Cloudflare Workers AI credentials.
-
-Then run:
-
-```bash
-streamlit run app.py
-```
-
----
-
-## Responsible Use
-
-This project reviews the **quality of written appraisal comments**.
-
-It does not decide:
-
-* employee ratings
-* promotions
-* compensation
-* discipline
-* hiring
-* termination
-
-Flags are review signals, not conclusions about an employee or manager.
-
-The public project uses synthetic data only.
-
-See [`docs/governance.md`](docs/governance.md) for more details.
-
----
-
-## Project Background
-
-The Appraisal Analyst began as a graduate capstone project focused on improving the quality of written employee performance reviews.
-
-I later rebuilt and expanded the idea as an individual portfolio project using Python, Streamlit, a rule-based baseline, contextual LLM analysis, synthetic-data evaluation, automated testing, and responsible-AI documentation.
