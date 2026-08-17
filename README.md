@@ -8,7 +8,7 @@ The Appraisal Analyst checks whether a manager's written feedback is vague, lack
 
 ---
 
-## Why I Built This
+## Why This Project Exists
 
 Performance-review comments can influence how an employee's work is understood and may later affect development, promotion, compensation, or other career decisions.
 
