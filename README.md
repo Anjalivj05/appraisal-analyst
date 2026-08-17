@@ -4,6 +4,10 @@ The Appraisal Analyst is a Python and Streamlit application that reviews employe
 
 It checks whether feedback is vague, lacks supporting evidence, does not align with the selected rating, or focuses too much on personality instead of job performance.
 
+### Live Demo
+
+**Try the application:** [appraisal-analyst.streamlit.app](https://appraisal-analyst.streamlit.app)
+
 The project compares two different approaches:
 
 * a transparent **rule-based baseline**
